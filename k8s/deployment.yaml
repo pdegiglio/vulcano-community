@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vulcano-community
+  namespace: default
+  labels:
+    app: vulcano-community
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vulcano-community
+  template:
+    metadata:
+      labels:
+        app: vulcano-community
+    spec:
+      containers:
+      - name: vulcano-community
+        image: vulcano-community:latest
+        imagePullPolicy: Never  # For local builds
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vulcano-community-service
+  namespace: default
+  labels:
+    app: vulcano-community
+spec:
+  selector:
+    app: vulcano-community
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+  type: ClusterIP
