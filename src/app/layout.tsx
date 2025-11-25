@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Your home community portal for the Vulcano Towers building complex. Stay connected with neighbors, get building updates, and join community events.",
 };
 
+import { Providers } from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -11,10 +11,16 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-4">
               <Link
-                href="/members"
+                href="/auth/signin"
+                className="text-slate-300 hover:text-white transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/auth/signup"
                 className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
-                Resident Portal
+                Register
               </Link>
             </div>
           </div>
@@ -54,12 +60,18 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-12">
+          <div className="mt-12 space-x-4">
             <Link
-              href="/members"
+              href="/auth/signup"
               className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors inline-block"
             >
-              Resident Portal
+              Join Community
+            </Link>
+            <Link
+              href="/auth/signin"
+              className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors inline-block"
+            >
+              Sign In
             </Link>
           </div>
         </div>

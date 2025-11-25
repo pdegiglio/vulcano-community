@@ -1,6 +1,34 @@
+"use client";
+
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function MembersPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    } else if (status === "authenticated" && session) {
+      // This will be logged by the middleware, but we can add app-specific logging
+      console.log(`[MEMBERS] Portal accessed successfully by: ${session.user.email} (${session.user.name}, Apt: ${session.user.apartmentNumber})`);
+    }
+  }, [status, router, session]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
       <nav className="bg-slate-800 border-b border-slate-700">
@@ -12,12 +40,21 @@ export default function MembersPage() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
+              <span className="text-slate-300">
+                Welcome, {session.user?.name} (Apt. {session.user?.apartmentNumber})
+              </span>
               <Link
                 href="/"
                 className="text-slate-300 hover:text-white transition-colors"
               >
                 Home
               </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Sign Out
+              </button>
             </div>
           </div>
         </div>

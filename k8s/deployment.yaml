@@ -14,13 +14,19 @@ spec:
     metadata:
       labels:
         app: vulcano-community
+        component: webapp
+        service: community-portal
     spec:
+      hostNetwork: true
       containers:
       - name: vulcano-community
         image: vulcano-community:latest
         imagePullPolicy: Never  # For local builds
         ports:
         - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: vulcano-community-env
         env:
         - name: NODE_ENV
           value: "production"
