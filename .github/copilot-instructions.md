@@ -98,5 +98,49 @@ kubectl logs -f deployment/vulcano-community
 
 ---
 
+## K3s Deployment Best Practices
+
+### General K3s Configuration Knowledge:
+- **Cluster Status**: K3s runs as systemd service (`systemctl status k3s`)
+- **kubectl Access**: Use `sudo k3s kubectl` for cluster operations
+- **Image Storage**: Local Docker images are available to k3s automatically
+- **Port Conflicts**: k3s doesn't handle port conflicts gracefully during rollouts
+- **Node Resources**: Single-node cluster - resource constraints can cause scheduling issues
+
+### Efficient Redeployment Process:
+1. **Pre-deployment Cleanup**: Always remove old pods manually before rollout
+2. **Image Building**: Docker builds are cached efficiently with multi-stage builds
+3. **Rollout Strategy**: Use `rollout restart` after manual pod cleanup
+4. **Validation**: Check HTTP response and pod logs to confirm deployment success
+
+### Troubleshooting Common Issues:
+- **Port Conflicts**: `FailedScheduling` due to port conflicts - delete old pods first
+- **Image Pull**: Local images don't need registry - use `latest` tag
+- **kubectl Connection**: If kubectl fails, ensure k3s service is running
+- **Resource Limits**: Monitor memory/CPU usage on single-node clusters
+
+## Vulcano Community Specific Deployment Process
+
+### Pod Management for Efficient Redeployment:
+**Critical**: The vulcano-community deployment has issues with graceful pod termination and port conflicts.
+
+**Required Pre-deployment Steps**:
+1. **Identify Running Pods**: `sudo k3s kubectl get pods | grep vulcano`
+2. **Force Delete Old Pods**: `sudo k3s kubectl delete pod <old-pod-name> --force --grace-period=0`
+3. **Wait for Port Release**: Allow 10-15 seconds for port cleanup
+4. **Deploy New Version**: Use `rollout restart` or apply manifests
+
+**Why This Is Necessary**:
+- Pods don't terminate gracefully during rollouts
+- Port conflicts occur when old pods hold onto host ports
+- k3s scheduler fails with "didn't have free ports" error
+- Manual cleanup ensures clean deployment state
+
+### Environment-Specific Configuration:
+- **Production URL**: `https://vulcano-community.ddns.net`
+- **Local Dev URL**: `http://192.168.1.16:8080` (with --hostname 0.0.0.0)
+- **Database**: PostgreSQL on localhost:5432
+- **Environment Files**: `.env` (production) + `.env.local` (development overrides)
+
 *Last updated: 2025-11-27*
 *System: Docker 27.4.0, Next.js 16.0.4, React 19.2.0, Prisma 6.19.0*
