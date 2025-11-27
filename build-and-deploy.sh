@@ -7,14 +7,19 @@ set -e  # Exit on any error
 
 echo "🚀 Starting Vulcano Community build and deployment..."
 
-# Step 1: Build Docker image
-echo "📦 Building Docker image..."
-docker build -t vulcano-community:latest .
+# Step 1: Build Docker image with timestamp tag
+TIMESTAMP=$(date +%s)
+IMAGE_TAG="vulcano-community:$TIMESTAMP"
+echo "📦 Building Docker image: $IMAGE_TAG"
+docker build -t $IMAGE_TAG .
 if [ $? -ne 0 ]; then
     echo "❌ Docker build failed!"
     exit 1
 fi
-echo "✅ Docker image built successfully"
+
+# Also tag as latest for convenience
+docker tag $IMAGE_TAG vulcano-community:latest
+echo "✅ Docker image built successfully: $IMAGE_TAG"
 
 # Step 2: Pre-deployment cleanup (Critical for this application)
 echo "🧹 Cleaning up existing pods..."
@@ -37,17 +42,23 @@ else
     echo "✅ No existing pods found"
 fi
 
-# Step 3: Apply Kubernetes manifests
-echo "📝 Applying Kubernetes manifests..."
-sudo k3s kubectl apply -f k8s/
+# Step 3: Update deployment with new image tag
+echo "📝 Updating deployment with new image: $IMAGE_TAG"
+sudo k3s kubectl set image deployment/vulcano-community vulcano-community=$IMAGE_TAG -n default
 if [ $? -ne 0 ]; then
-    echo "❌ Kubernetes manifest application failed!"
-    exit 1
+    echo "❌ Image update failed! Applying manifests as fallback..."
+    sudo k3s kubectl apply -f k8s/
+    if [ $? -ne 0 ]; then
+        echo "❌ Kubernetes manifest application failed!"
+        exit 1
+    fi
+    # If manifests were applied, still need to update the image
+    sudo k3s kubectl set image deployment/vulcano-community vulcano-community=$IMAGE_TAG -n default
 fi
 
-# Step 4: Trigger rollout restart to pick up new image
-echo "🔄 Triggering deployment rollout..."
-sudo k3s kubectl rollout restart deployment/vulcano-community -n default
+# Step 4: The image update triggers rollout automatically, but let's ensure it
+echo "🔄 Ensuring deployment rollout with new image..."
+sudo k3s kubectl annotate deployment vulcano-community deployment.kubernetes.io/revision- -n default 2>/dev/null || true
 
 # Step 5: Wait for deployment to be ready
 echo "⏳ Waiting for deployment to be ready..."
@@ -69,6 +80,15 @@ if [ -z "$NEW_POD" ]; then
 fi
 
 echo "✅ New pod running: $NEW_POD"
+
+# Verify the pod is using the new image
+echo "🔍 Verifying pod is using new image..."
+POD_IMAGE=$(sudo k3s kubectl get pod $NEW_POD -n default -o jsonpath='{.spec.containers[0].image}')
+if [ "$POD_IMAGE" = "$IMAGE_TAG" ]; then
+    echo "✅ Pod is using correct image: $POD_IMAGE"
+else
+    echo "⚠️  Warning: Pod is using different image: $POD_IMAGE (expected: $IMAGE_TAG)"
+fi
 
 # Step 7: Test application availability
 echo "🌐 Testing application availability..."

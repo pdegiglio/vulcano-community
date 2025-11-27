@@ -115,9 +115,26 @@ kubectl logs -f deployment/vulcano-community
 
 ### Troubleshooting Common Issues:
 - **Port Conflicts**: `FailedScheduling` due to port conflicts - delete old pods first
-- **Image Pull**: Local images don't need registry - use `latest` tag
+- **Image Caching**: k3s caches images locally - MUST use versioned tags or force update
 - **kubectl Connection**: If kubectl fails, ensure k3s service is running
 - **Resource Limits**: Monitor memory/CPU usage on single-node clusters
+
+### CRITICAL: Docker Image Versioning for k3s
+**Problem**: k3s caches Docker images locally. Using `latest` tag means k3s won't pull new versions.
+
+**Solution**: Always use timestamp-based or commit-based image tags:
+```bash
+# Build with timestamp tag
+docker build -t vulcano-community:$(date +%s) .
+# OR build with git commit hash
+docker build -t vulcano-community:$(git rev-parse --short HEAD) .
+```
+
+**Deployment Requirements**:
+1. **Never reuse image tags** - each build must have unique tag
+2. **Update deployment manifest** to reference new image tag
+3. **Force image pull policy** with `imagePullPolicy: Always` (if using registry)
+4. **Clean old images** periodically to save disk space
 
 ## Vulcano Community Specific Deployment Process
 
@@ -135,6 +152,8 @@ kubectl logs -f deployment/vulcano-community
 - Port conflicts occur when old pods hold onto host ports
 - k3s scheduler fails with "didn't have free ports" error
 - Manual cleanup ensures clean deployment state
+- **k3s caches Docker images** - new builds with same tag won't be used
+- **Image versioning required** - each deployment needs unique image tag
 
 ### Environment-Specific Configuration:
 - **Production URL**: `https://vulcano-community.ddns.net`
