@@ -37,16 +37,16 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-8 w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 w-full max-w-md shadow-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-slate-300">Sign in to Vulcano Towers Community</p>
+          <h1 className="text-2xl font-bold text-stone-800 dark:text-stone-200 mb-2">Welcome Back</h1>
+          <p className="text-stone-600 dark:text-stone-400">Sign in to Vulcano Towers Community</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-stone-800 dark:text-stone-200 mb-2">
               Email
             </label>
             <input
@@ -55,13 +55,13 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-stone-800 dark:text-stone-200 placeholder-stone-400 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               placeholder="your.email@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-stone-800 dark:text-stone-200 mb-2">
               Password
             </label>
             <input
@@ -70,7 +70,7 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-stone-800 dark:text-stone-200 placeholder-stone-400 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               placeholder="Your password"
             />
           </div>
@@ -82,20 +82,20 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="w-full bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 disabled:bg-yellow-800 text-white font-medium py-2 px-4 rounded-lg transition-colors"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-slate-300">
+          <p className="text-stone-600 dark:text-stone-400">
             Don't have an account?{" "}
-            <Link href="/auth/signup" className="text-orange-400 hover:text-orange-300">
+            <Link href="/auth/signup" className="text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 dark:hover:text-yellow-400">
               Register here
             </Link>
           </p>
-          <Link href="/" className="text-slate-400 hover:text-slate-300 text-sm">
+          <Link href="/" className="text-stone-500 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400 text-sm">
             ← Back to Home
           </Link>
         </div>

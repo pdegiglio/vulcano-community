@@ -21,6 +21,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate apartment number format (NN.NNN)
+    const apartmentRegex = /^\d{2}\.\d{3}$/;
+    if (!apartmentRegex.test(apartmentNumber)) {
+      console.log(`[REGISTRATION] Registration failed - invalid apartment format: ${apartmentNumber} for: ${email} from IP: ${clientIP}`);
+      return NextResponse.json(
+        { error: "Apartment number must be in format NN.NNN (e.g., 12.345)" },
+        { status: 400 }
+      );
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {

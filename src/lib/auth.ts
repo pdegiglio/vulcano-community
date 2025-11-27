@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (user) {
         token.role = user.role;
         token.apartmentNumber = user.apartmentNumber;
@@ -71,6 +71,15 @@ export const authOptions: NextAuthOptions = {
           console.log(`[AUTH] JWT created for user: ${user.email} (${user.name})`);
         }
       }
+      
+      // Handle session updates from update() calls
+      if (trigger === "update" && session) {
+        token.name = session.name || token.name;
+        token.apartmentNumber = session.apartmentNumber || token.apartmentNumber;
+        token.tower = session.tower || token.tower;
+        console.log(`[AUTH] JWT updated via session update: ${token.email} (${token.name}, Apt: ${token.apartmentNumber})`);
+      }
+      
       return token;
     },
     async session({ session, token }) {
