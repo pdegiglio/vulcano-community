@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
+  /* Vulcano Zürich Brand Theme */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #232323;
+  
+  /* Vulcano Zürich Brand Colors */
+  --vulcano-charcoal: #232323;
+  --vulcano-white: #ffffff;
+  --vulcano-light-gray: #f6f6f6;
+  --vulcano-bronze: #d4af37;
+  --vulcano-blue-gray: #607d8b;
+  --vulcano-medium-gray: #666666;
+  --vulcano-border: #e5e5e5;
 }
 
 @theme inline {
@@ -10,12 +20,21 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Vulcano Zürich brand palette */
+  --color-vulcano-charcoal: var(--vulcano-charcoal);
+  --color-vulcano-white: var(--vulcano-white);
+  --color-vulcano-light-gray: var(--vulcano-light-gray);
+  --color-vulcano-bronze: var(--vulcano-bronze);
+  --color-vulcano-blue-gray: var(--vulcano-blue-gray);
+  --color-vulcano-medium-gray: var(--vulcano-medium-gray);
+  --color-vulcano-border: var(--vulcano-border);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #232323;
+    --foreground: #f6f6f6;
   }
 }
 
