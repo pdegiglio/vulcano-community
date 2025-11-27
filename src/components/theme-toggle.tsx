@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTheme } from './theme-provider';
 
 const SunIcon = () => (
@@ -52,8 +53,15 @@ const MonitorIcon = () => (
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleThemeChange = () => {
+    if (!mounted) return;
+    
     if (theme === 'light') {
       setTheme('dark');
     } else if (theme === 'dark') {
@@ -84,6 +92,15 @@ export function ThemeToggle() {
         return 'System theme';
     }
   };
+
+  // Don't render anything until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="inline-flex items-center justify-center rounded-md p-2 w-10 h-10">
+        {/* Placeholder while loading */}
+      </div>
+    );
+  }
 
   return (
     <button
